@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:jsc_task2/resources/auth_method.dart';
+import 'package:jsc_task2/providers/auth_provider.dart';
 import 'package:jsc_task2/screens/sign_up_screen.dart';
 import 'package:jsc_task2/screens/widgets/snack_bar.dart';
 import 'package:jsc_task2/utils/box_dec.dart';
@@ -8,37 +8,34 @@ import 'package:jsc_task2/utils/const_color.dart';
 import 'package:jsc_task2/utils/const_size.dart';
 import 'package:jsc_task2/screens/widgets/text_field_widget.dart';
 import 'package:jsc_task2/screens/widgets/text_widget.dart';
+import 'package:provider/provider.dart';
 
-class LogInScreen extends StatefulWidget {
-  const LogInScreen({Key? key}) : super(key: key);
+class LogInScreen extends StatelessWidget {
+  LogInScreen({Key? key}) : super(key: key);
 
-  @override
-  State<LogInScreen> createState() => _LogInScreenState();
-}
 
-class _LogInScreenState extends State<LogInScreen> {
   final emailController = TextEditingController();
 
   final passworsController = TextEditingController();
 
   final formKey = GlobalKey<FormState>();
 
-  bool isLoading = false;
 
-  Future<void> userLogIn() async {
-    setState(() {
-      isLoading = true;
-    });
-    String result = await AuthMethods()
-        .signInUser(emailController.text, passworsController.text, context);
 
-    if (result != "Success") {
-      ShowDialogs.popUp("Email and Password dosen't match");
-      setState(() {
-        isLoading = false;
-      });
-    }
-  }
+  // Future<void> userLogIn() async {
+  //   setState(() {
+  //     isLoading = true;
+  //   });
+  //   String result = await AuthMethods()
+  //       .signInUser(emailController.text, passworsController.text, context);
+
+  //   if (result != "Success") {
+  //     ShowDialogs.popUp("Email and Password dosen't match");
+  //     setState(() {
+  //       isLoading = false;
+  //     });
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -97,20 +94,23 @@ class _LogInScreenState extends State<LogInScreen> {
                 SizedBox(
                   width: 220,
                   height: 50,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      if (formKey.currentState!.validate()) {
-                        userLogIn();
-                      }
-                    },
-                    // style: ElevatedButton.styleFrom(
-                    //     backgroundColor: const Color(0xff134CB5)),
-                    child: isLoading == true
-                        ? const CircularProgressIndicator(
-                            color: subColor,
-                            strokeWidth: 2,
-                          )
-                        : const Text('Sign Up'),
+                  child: Consumer<AuthProvider>(
+                    builder: (context, value, child) => 
+                    ElevatedButton(
+                      onPressed: () {
+                        if (formKey.currentState!.validate()) {
+                         value.userLogIn(emailController.text, passworsController.text, context);
+                        }
+                      },
+                      // style: ElevatedButton.styleFrom(
+                      //     backgroundColor: const Color(0xff134CB5)),
+                      child: value.isLoading == true
+                          ? const CircularProgressIndicator(
+                              color: subColor,
+                              strokeWidth: 2,
+                            )
+                          : const Text('Sign Up'),
+                    ),
                   ),
                 ),
               ],
@@ -118,7 +118,7 @@ class _LogInScreenState extends State<LogInScreen> {
           ),
         ),
         bottomSheet: Container(
-          color: const Color(0xff0B42AB),
+          color:mainColor,
           child: TextButton(
             onPressed: () {
               Navigator.of(context).push(

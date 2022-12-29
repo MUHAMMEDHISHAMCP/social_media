@@ -2,23 +2,25 @@ import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:jsc_task2/resources/storage_method.dart';
+import 'package:jsc_task2/model/user.dart';
+import 'package:jsc_task2/providers/storage_method.dart';
 import 'package:jsc_task2/screens/widgets/bottom_nav.dart';
 import 'package:jsc_task2/screens/widgets/snack_bar.dart';
 
-class AuthMethods extends ChangeNotifier {
+class AuthProvider extends ChangeNotifier {
   bool isLoading = false;
   FirebaseAuth auth = FirebaseAuth.instance;
   FirebaseFirestore fireStore = FirebaseFirestore.instance;
 
+
+//##-- SignUp User --##\\
+
   Future<String> signUpUser(String email, String password, String confirmpsvd,
       String userName, Uint8List file, context) async {
     String msg = "";
-    isLoading = true;
-    notifyListeners();
+   
     try {
       if (email.isNotEmpty || password.isNotEmpty || confirmpsvd.isNotEmpty) {
         if (password == confirmpsvd) {
@@ -27,37 +29,32 @@ class AuthMethods extends ChangeNotifier {
             password: password,
           );
 
-          log(auth.currentUser!.uid);
+       
           String imageUrl =
-              await StorageMethod().uploadImage('profilePics', file, false, '');
+              await StorageMethod().uploadImage('profilePics', file, false,);
           Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(
                 builder: (context) => const BottomNav(),
               ),
               (route) => false);
-
-          await fireStore.collection('users').doc(userDetails.user!.uid).set(
-              {"userName": userName, "email": email, "imageUrl": imageUrl});
-          isLoading = false;
-          msg = 'SignUp Success';
+           UserData userData = UserData(email: email, userName: userName, uid:userDetails.user!.uid, imageUrl: imageUrl);
+          // await fireStore.collection('users').doc(userDetails.user!.uid).set(
+          //     {"userName": userName, "email": email, "imageUrl": imageUrl});
+          await fireStore.collection('users').doc(userDetails.user!.uid).set(userData.toJason());
+          msg = 'Success';
         } else {
-          isLoading = false;
           notifyListeners();
           ShowDialogs.popUp("Passwords dosen't match");
         }
       }
     } on FirebaseException catch (e) {
       if (e.code == 'invalid-email') {
-        isLoading = false;
         return ShowDialogs.popUp('Enter valid email');
       } else if (e.code == 'network-request-failed') {
-        isLoading = false;
         return ShowDialogs.popUp('No Internet');
       } else if (e.code == 'weak-password') {
-        isLoading = false;
         return ShowDialogs.popUp('Password too short');
       } else if (e.code == 'email-already-in-use') {
-        isLoading = false;
         return ShowDialogs.popUp('Email already exist');
       }
     } catch (e) {
@@ -68,6 +65,28 @@ class AuthMethods extends ChangeNotifier {
     return msg;
   }
 
+  
+  Future<void> userSignUp(String email, String password, String confirmpsvd,
+      String userName, Uint8List file, context) async {
+      isLoading = true;
+      notifyListeners();
+
+    String result =  await signUpUser( email,  password,  confirmpsvd,
+       userName,  file, context);
+
+    if (result != 'Success') {
+      ShowDialogs.popUp("Something went worng");
+        isLoading = false;
+        notifyListeners();
+   
+    }else{
+
+      isLoading =false;
+      notifyListeners();
+    }
+  }
+
+
 
 //##-- SignIn User --##\\
   Future<String> signInUser(
@@ -76,8 +95,7 @@ class AuthMethods extends ChangeNotifier {
     context,
   ) async {
     String msg = '';
-    isLoading = true;
-    notifyListeners();
+
 
     try {
       log('try');
@@ -92,24 +110,44 @@ class AuthMethods extends ChangeNotifier {
       }
     } on FirebaseException catch (e) {
       if (e.code == 'invalid-email') {
-        isLoading = false;
+   
         return ShowDialogs.popUp('Enter valid email');
       } else if (e.code == 'network-request-failed') {
-        isLoading = false;
         return ShowDialogs.popUp('No Internet');
       } else if (e.code == 'weak-password') {
-        isLoading = false;
         return ShowDialogs.popUp('Password too short');
       } else if (e.code == 'email-already-in-use') {
-        isLoading = false;
         return ShowDialogs.popUp('Email already exist');
       }
     } catch (e) {
+      print(e.toString());
       msg = e.toString();
-     print(e);
     }
     return msg;
   }
 
+    Future<void> userLogIn(    String email,
+    String password,
+    context,) async {
+      isLoading = true;
+       notifyListeners();
+    String result = await signInUser(email, password, context);
 
+    if (result != "Success") {
+      ShowDialogs.popUp("Email and Password dosen't match");
+        isLoading = false;
+        notifyListeners();
+   
+    }
+  }
+
+  //##-- Get UserDetails --##\\
+  
+  Future<UserData> getUserDetails() async{
+  User currentUser = auth.currentUser!;
+
+   DocumentSnapshot snap = await fireStore.collection('users').doc(currentUser.uid).get();
+
+   return UserData.fromSnap(snap);
+  }
 }

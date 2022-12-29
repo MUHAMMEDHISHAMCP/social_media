@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:jsc_task2/resources/auth_method.dart';
+import 'package:jsc_task2/providers/auth_provider.dart';
 import 'package:jsc_task2/screens/login_screen.dart';
 import 'package:jsc_task2/screens/widgets/snack_bar.dart';
 import 'package:jsc_task2/screens/widgets/text_widget.dart';
@@ -11,6 +11,7 @@ import 'package:jsc_task2/utils/const_color.dart';
 import 'package:jsc_task2/utils/const_size.dart';
 import 'package:jsc_task2/screens/widgets/text_field_widget.dart';
 import 'package:jsc_task2/utils/pick_image.dart';
+import 'package:provider/provider.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
@@ -39,20 +40,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
     super.dispose();
   }
 
-  Future<void> userLogIn() async {
-    setState(() {
-      isLoading = true;
-    });
-    String result = await AuthMethods()
-        .signInUser(emailController.text, passworsController.text, context);
+  // Future<void> userSignUp() async {
+  //   setState(() {
+  //     isLoading = true;
+  //   });
+  //   String result = await AuthMethods()
+  //       .signUpUser(emailController.text, passworsController.text,confirmPassworsController.text,userNameController.text, profileImage!,context);
 
-    if (result != "Success") {
-      ShowDialogs.popUp("Email and Password dosen't match");
-      setState(() {
-        isLoading = false;
-      });
-    }
-  }
+  //   if (result != 'Success') {
+  //     ShowDialogs.popUp("Something went worng");
+  //     setState(() {
+  //       isLoading = false;
+  //     });
+  //   }
+  // }
 
   void slectImage() async {
     Uint8List pickedImage = await PickImage.pickImage(ImageSource.gallery);
@@ -157,48 +158,47 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 kHeight20,
                 SizedBox(
                   width: 220,
-                  height: 40,
-                  child: AuthMethods().isLoading == true
-                      ? const CircularProgressIndicator(
-                          color: subColor,
-                          strokeWidth: 2,
-                        )
-                      : ElevatedButton(
-                          onPressed: () async {
-                            if (formKey.currentState!.validate()) {
-                              if (profileImage == null) {
-                                return ShowDialogs.popUp('Add Profile');
+                  height: 50,
+                  child: Consumer<AuthProvider>(
+                    builder: (context, value, child) => 
+                    ElevatedButton(
+                            onPressed: () async {
+                              if (formKey.currentState!.validate()) {
+                                if (profileImage == null) {
+                                  return ShowDialogs.popUp('Add Profile');
+                                }
+                          
+                                 value.userSignUp(
+                                    emailController.text,
+                                    passworsController.text,
+                                    confirmPassworsController.text,
+                                    userNameController.text,
+                                    profileImage!,
+                                    context);
                               }
-                              await AuthMethods().signUpUser(
-                                  emailController.text,
-                                  passworsController.text,
-                                  confirmPassworsController.text,
-                                  userNameController.text,
-                                  profileImage!,
-                                  context);
-                            }
-                          },
-                          // style: ElevatedButton.styleFrom(
-                          //     backgroundColor: const Color(0xff134CB5)),
-                          child: isLoading == true
-                              ? const CircularProgressIndicator(
-                                  color: subColor,
-                                  strokeWidth: 2,
-                                )
-                              : const Text('Sign Up'),
-                        ),
+                            },
+                            // style: ElevatedButton.styleFrom(
+                            //     backgroundColor: const Color(0xff134CB5)),
+                            child:value.isLoading == true
+                                ? const CircularProgressIndicator(
+                                    color: subColor,
+                                    strokeWidth: 2,
+                                  )
+                                : const Text('Sign Up'),
+                          ),
+                  ),
                 ),
               ],
             ),
           ),
         ),
         bottomSheet: Container(
-          color: const Color(0xff134CB5),
+          color: mainColor,
           child: TextButton(
             onPressed: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) => const LogInScreen(),
+                  builder: (context) =>  LogInScreen(),
                 ),
               );
             },
