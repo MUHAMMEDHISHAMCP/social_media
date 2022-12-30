@@ -17,7 +17,7 @@ class _BottomNavigationBarState extends State<BottomNav> {
 
   final screens = [
     const HomeScreen(),
-     const AddPostScreen(),
+    const AddPostScreen(),
     const AccountScreen(),
   ];
 
@@ -30,7 +30,7 @@ class _BottomNavigationBarState extends State<BottomNav> {
           showUnselectedLabels: true,
           selectedItemColor: subColor,
           unselectedItemColor: iconColor,
-          backgroundColor:  const Color(0xff134CB5),
+          backgroundColor: const Color(0xff134CB5),
           iconSize: 30,
           currentIndex: selectedIndex,
           onTap: (newIndex) {
@@ -39,18 +39,17 @@ class _BottomNavigationBarState extends State<BottomNav> {
             });
           },
           items: const [
-             BottomNavigationBarItem(
+            BottomNavigationBarItem(
               backgroundColor: subColor,
               icon: Icon(Icons.home),
               label: 'Home',
             ),
-        
-          BottomNavigationBarItem(
+            BottomNavigationBarItem(
               backgroundColor: subColor,
               icon: Icon(Icons.add_box_outlined),
               label: 'Add Post',
             ),
-             BottomNavigationBarItem(
+            BottomNavigationBarItem(
               icon: Icon(Icons.account_circle_outlined),
               label: 'Account',
             )

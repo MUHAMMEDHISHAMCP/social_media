@@ -37,14 +37,16 @@ class _AddPostScreenState extends State<AddPostScreen> {
 
   @override
   void initState() {
-    getUserDetails();
     super.initState();
+    getUserDetails();
   }
 
   @override
   Widget build(BuildContext context) {
-    UserData userDetails = Provider.of<UserProvider>(context).getUser;
-    final prov = Provider.of<PostProvider>(context,);
+    UserData? userDetails = Provider.of<UserProvider>(context).getUser;
+    final prov = Provider.of<PostProvider>(
+      context,
+    );
     return Container(
       decoration: BoxDeco.containerBoxDecoration(),
       child: SafeArea(
@@ -60,14 +62,19 @@ class _AddPostScreenState extends State<AddPostScreen> {
             backgroundColor: mainColor,
           ),
           backgroundColor: Colors.transparent,
-          body:  Padding(
+          body: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Center(
               child: ListView(
                 physics: const NeverScrollableScrollPhysics(),
                 // mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  prov.isLoading == true? const LinearProgressIndicator(color: mainColor,backgroundColor: subColor,):const SizedBox(),
+                  prov.isLoading == true
+                      ? const LinearProgressIndicator(
+                          color: mainColor,
+                          backgroundColor: subColor,
+                        )
+                      : const SizedBox(),
                   kHeight20,
                   postImage == null
                       ? GestureDetector(
@@ -142,26 +149,29 @@ class _AddPostScreenState extends State<AddPostScreen> {
                   ),
                   kheight10,
                   Consumer<PostProvider>(
-                    builder: (context, value, child) => ElevatedButton(
-                        onPressed: () async {
-                          if (postImage == null) {
-                            ShowDialogs.popUp('Add Image');
-                          }
-                       await  value.postImage(
-                            postImage!,
-                            userDetails.uid,
-                            userDetails.imageUrl,
-                            userDetails.userName,
-                            descriptionController.text,
-                          );
-                          postImage = null;
-                          descriptionController.clear();
-                        },
-                        child: const TextWidget(
-                          text: "Add Your Post",
-                          fontSize: 16,
-                          weight: FontWeight.bold,
-                        )),
+                    builder: (context, value, child) => Visibility(
+                      visible: !value.isLoading,
+                      child: ElevatedButton(
+                          onPressed: () async {
+                            if (postImage == null) {
+                              ShowDialogs.popUp('Add Image');
+                            }
+                            await value.postImage(
+                              postImage!,
+                              userDetails!.uid,
+                              userDetails.imageUrl,
+                              userDetails.userName,
+                              descriptionController.text,
+                            );
+                            postImage = null;
+                            descriptionController.clear();
+                          },
+                          child: const TextWidget(
+                            text: "Add Your Post",
+                            fontSize: 16,
+                            weight: FontWeight.bold,
+                          )),
+                    ),
                   ),
                 ],
               ),

@@ -72,121 +72,130 @@ class _SignUpScreenState extends State<SignUpScreen> {
           key: formKey,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 32),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+            child: ListView(
               children: [
-                Stack(
-                  children: [
-                    profileImage != null
-                        ? CircleAvatar(
-                            radius: 60,
-                            backgroundImage: MemoryImage(profileImage!),
-                          )
-                        : GestureDetector(
-                            onTap: () {
-                              slectImage();
-                            },
-                            child: const CircleAvatar(
-                              radius: 60,
-                              backgroundColor: kBlack,
-                              backgroundImage:
-                                  AssetImage('assets/dummy_profile.png'),
-                            ),
-                          ),
-                    Positioned(
-                        bottom: 0,
-                        right: -7,
-                        child: IconButton(
-                            onPressed: () {
-                              slectImage();
-                            },
-                            icon: const Icon(
-                              Icons.add_a_photo_outlined,
-                              color: kBlack,
-                              size: 30,
-                            ))),
-                  ],
-                ),
-                kHeight15,
-                TextInputWidget(
-                  hintText: 'UserName',
-                  controller: userNameController,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please Enter a Name';
-                    } else {
-                      return null;
-                    }
-                  },
-                ),
-                kheight10,
-                TextInputWidget(
-                  hintText: 'E-mail',
-                  controller: emailController,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please Enter email';
-                    } else {
-                      return null;
-                    }
-                  },
-                ),
-                kheight10,
-                TextInputWidget(
-                  hintText: 'Password',
-                  controller: passworsController,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please Enter password';
-                    } else {
-                      return null;
-                    }
-                  },
-                ),
-                kheight10,
-                TextInputWidget(
-                  hintText: 'Confirm Password',
-                  controller: confirmPassworsController,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please Confirm password';
-                    } else {
-                      return null;
-                    }
-                  },
-                ),
-                kHeight20,
                 SizedBox(
-                  width: 220,
-                  height: 50,
-                  child: Consumer<AuthProvider>(
-                    builder: (context, value, child) => 
-                    ElevatedButton(
-                            onPressed: () async {
-                              if (formKey.currentState!.validate()) {
-                                if (profileImage == null) {
-                                  return ShowDialogs.popUp('Add Profile');
-                                }
-                          
-                                 value.userSignUp(
-                                    emailController.text,
-                                    passworsController.text,
-                                    confirmPassworsController.text,
-                                    userNameController.text,
-                                    profileImage!,
-                                    context);
+                  height: MediaQuery.of(context).size.height / 6,
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Stack(
+                      children: [
+                        profileImage != null
+                            ? CircleAvatar(
+                                radius: 60,
+                                backgroundImage: MemoryImage(profileImage!),
+                              )
+                            : GestureDetector(
+                                onTap: () {
+                                  slectImage();
+                                },
+                                child: const CircleAvatar(
+                                  radius: 60,
+                                  backgroundColor: kBlack,
+                                  backgroundImage:
+                                      AssetImage('assets/dummy_profile.png'),
+                                ),
+                              ),
+                        Positioned(
+                            bottom: 0,
+                            right: -7,
+                            child: IconButton(
+                                onPressed: () {
+                                  slectImage();
+                                },
+                                icon: const Icon(
+                                  Icons.add_a_photo_outlined,
+                                  color: kBlack,
+                                  size: 30,
+                                ))),
+                      ],
+                    ),
+                    kHeight15,
+                    TextInputWidget(
+                      hintText: 'UserName',
+                      controller: userNameController,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please Enter a Name';
+                        } else {
+                          return null;
+                        }
+                      },
+                    ),
+                    kheight10,
+                    TextInputWidget(
+                      hintText: 'E-mail',
+                      controller: emailController,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please Enter email';
+                        } else {
+                          return null;
+                        }
+                      },
+                    ),
+                    kheight10,
+                    TextInputWidget(
+                      isObsure: true,
+                      hintText: 'Password',
+                      controller: passworsController,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please Enter password';
+                        } else {
+                          return null;
+                        }
+                      },
+                    ),
+                    kheight10,
+                    TextInputWidget(
+                      isObsure: true,
+                      hintText: 'Confirm Password',
+                      controller: confirmPassworsController,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please Confirm password';
+                        } else {
+                          return null;
+                        }
+                      },
+                    ),
+                    kHeight20,
+                    SizedBox(
+                      width: 220,
+                      height: 50,
+                      child: Consumer<AuthProvider>(
+                        builder: (context, value, child) => ElevatedButton(
+                          onPressed: () async {
+                            if (formKey.currentState!.validate()) {
+                              if (profileImage == null) {
+                                return ShowDialogs.popUp('Add Profile');
                               }
-                            },
-                            // style: ElevatedButton.styleFrom(
-                            //     backgroundColor: const Color(0xff134CB5)),
-                            child:value.isLoading == true
-                                ? const CircularProgressIndicator(
-                                    color: subColor,
-                                    strokeWidth: 2,
-                                  )
-                                : const Text('Sign Up'),
-                          ),
-                  ),
+
+                              value.userSignUp(
+                                  emailController.text,
+                                  passworsController.text,
+                                  confirmPassworsController.text,
+                                  userNameController.text,
+                                  profileImage!,
+                                  context);
+                            }
+                          },
+                          // style: ElevatedButton.styleFrom(
+                          //     backgroundColor: const Color(0xff134CB5)),
+                          child: value.isLoading == true
+                              ? const CircularProgressIndicator(
+                                  color: subColor,
+                                  strokeWidth: 2,
+                                )
+                              : const Text('Sign Up'),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -198,7 +207,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             onPressed: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) =>  LogInScreen(),
+                  builder: (context) => LogInScreen(),
                 ),
               );
             },

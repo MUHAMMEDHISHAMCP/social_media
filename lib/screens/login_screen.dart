@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jsc_task2/providers/auth_provider.dart';
 import 'package:jsc_task2/screens/sign_up_screen.dart';
-import 'package:jsc_task2/screens/widgets/snack_bar.dart';
 import 'package:jsc_task2/utils/box_dec.dart';
 import 'package:jsc_task2/utils/const_color.dart';
 
@@ -13,14 +12,11 @@ import 'package:provider/provider.dart';
 class LogInScreen extends StatelessWidget {
   LogInScreen({Key? key}) : super(key: key);
 
-
   final emailController = TextEditingController();
 
   final passworsController = TextEditingController();
 
   final formKey = GlobalKey<FormState>();
-
-
 
   // Future<void> userLogIn() async {
   //   setState(() {
@@ -78,28 +74,37 @@ class LogInScreen extends StatelessWidget {
                   },
                 ),
                 kheight10,
-                TextInputWidget(
-                  hintText: 'Password',
-                  controller: passworsController,
-                  isObsure: true,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please Enter password';
-                    } else {
-                      return null;
-                    }
-                  },
+                Consumer<AuthProvider>(
+                  builder: (context, value, child) => TextInputWidget(
+                    hintText: 'Password',
+                    controller: passworsController,
+                    isObsure: value.isObscure,
+                    icon: IconButton(
+                        onPressed: () {
+                          value.isObscure = !value.isObscure;
+                        },
+                        icon: Icon(value.isObscure
+                            ? Icons.visibility_off
+                            : Icons.visibility)),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please Enter password';
+                      } else {
+                        return null;
+                      }
+                    },
+                  ),
                 ),
                 kHeight20,
                 SizedBox(
                   width: 220,
                   height: 50,
                   child: Consumer<AuthProvider>(
-                    builder: (context, value, child) => 
-                    ElevatedButton(
+                    builder: (context, value, child) => ElevatedButton(
                       onPressed: () {
                         if (formKey.currentState!.validate()) {
-                         value.userLogIn(emailController.text, passworsController.text, context);
+                          value.userLogIn(emailController.text,
+                              passworsController.text, context);
                         }
                       },
                       // style: ElevatedButton.styleFrom(
@@ -118,7 +123,7 @@ class LogInScreen extends StatelessWidget {
           ),
         ),
         bottomSheet: Container(
-          color:mainColor,
+          color: mainColor,
           child: TextButton(
             onPressed: () {
               Navigator.of(context).push(

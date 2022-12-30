@@ -4,9 +4,10 @@ class ShowDialogs {
   static final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
       GlobalKey<ScaffoldMessengerState>();
 
-  static popUp(String messege, [Color 
-  
-  color = Colors.red]) {
+  static popUp(
+    String messege, [
+    Color color = Colors.red,
+  ]) {
     scaffoldMessengerKey.currentState?.hideCurrentSnackBar();
     scaffoldMessengerKey.currentState?.showSnackBar(
       SnackBar(

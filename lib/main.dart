@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:jsc_task2/providers/auth_provider.dart';
 import 'package:jsc_task2/providers/post_provider.dart';
 import 'package:jsc_task2/providers/user_provider.dart';
-import 'package:jsc_task2/screens/home_screen.dart';
 import 'package:jsc_task2/screens/login_screen.dart';
+import 'package:jsc_task2/screens/splash_screen.dart';
 import 'package:jsc_task2/screens/widgets/bottom_nav.dart';
 import 'package:jsc_task2/screens/widgets/snack_bar.dart';
 import 'package:jsc_task2/screens/widgets/text_widget.dart';
@@ -63,7 +63,7 @@ class MyApp extends StatelessWidget {
         // },
         
         // ),
-         home:  LogInScreen(),
+             home: const SplashScreen(),
       ),
     );
   }
